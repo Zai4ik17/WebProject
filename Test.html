@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Переключение темы</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            transition: background 0.3s, color 0.3s;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            width: 500px;
+        }
+        .light-mode {
+            background: #ffffff;
+            color: #000000;
+        }
+        .dark-mode {
+            background: #121212;
+            color: #ffffff;
+        }
+        .toggle-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .toggle-btn::before {
+            content: '\2600'; /* Солнце */
+            transition: transform 0.3s;
+        }
+        .dark-mode .toggle-btn::before {
+            content: '\1F319'; /* Луна */
+            transform: rotate(360deg);
+        }
+        .logo {
+            position: absolute;
+            top: 10px;
+            right: 30px;
+        }
+        .logo img {
+            width: 100px;
+            height: auto;
+        }
+        .logo1 {
+            position: absolute;
+            top: 1px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .logo1 img {
+            width: 100px;
+            height: auto;
+        }
+        .tab {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s, transform 0.2s;
+        }
+        .tab:hover {
+            background: linear-gradient(135deg, #0056b3, #003f80);
+            transform: scale(1.05);
+        }
+        .image-wrapper {
+            display: flex;
+            gap: 20px;
+            position: absolute;
+            top: 120px;
+            left: 10px;
+            flex-wrap: wrap;
+        }
+        .image-container {
+            text-align: center;
+            position: relative;
+        }
+        .image-container video,
+        .image-container img {
+            width: 250px;
+            height: 250px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .image-container video:hover,
+        .image-container img:hover {
+            transform: scale(1.05);
+        }
+        .fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        video::-webkit-media-controls {
+            display: none;
+        }
+        .fullscreen video,
+        .fullscreen img {
+            max-width: 80%;
+            max-height: 80%;
+            border-radius: 10px;
+        }
+        .fullscreen .top-right {
+            position: absolute;
+            top: 40px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        /* Крестик для закрытия схемы */
+        .close-btn1 {
+            background: none;
+            border: none;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            transition: background-color 0.3s;
+        }
+        .close-btn1:hover {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        /* Крестик для закрытия фотографии */
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            transition: background-color 0.3s;
+        }
+        .close-btn:hover {
+            color: rgba(255, 0, 0, 0.8);
+        }
+        .photo-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            position:relative;
+            bottom: 4px;
+            left: 15px;
+        }
+        .controls {
+            margin-top: 100px;
+            display: flex;
+            gap: 20px;
+        }
+        .controls button {
+            background: rgba(255, 255, 255, 0.7);
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .tab, .kompensator-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s, transform 0.2s;
+        }
+        .tab:hover, .kompensator-btn:hover {
+            background: linear-gradient(135deg, #0056b3, #003f80);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <div class="logo">
+        <img src="./Схемы/БЭК.png" alt="Логотип БЭК">
+    </div>
+    <div class="logo1">
+        <img src="./Схемы/РТС-1.png" alt="Логотип БЭК">
+    </div>
+    <div class="container">
+        <div class="tab">Схемы</div>
+        <div class="image-wrapper">
+            <div class="image-container">
+                <video src="./Схемы/банзарова.mp4" controls loop muted onclick="showFullscreen(this, 'Схемы/Банзарова-1.jpg')"></video>
+                <p><strong>ЦТП Банзарова</strong></p>
+            </div>
+            <div class="image-container">
+                <video src="./Схемы/М.Конева.mp4" controls loop muted onclick="showFullscreen(this, 'Схемы/Конева-1.jpg')"></video>
+                <p><strong>ТНС Конева</strong></p>
+            </div>
+            <div class="image-container">
+                <video src="./Схемы/ТНС Школа.mp4" controls loop muted onclick="showFullscreen(this)"></video>
+                <p><strong>ТНС Школа 71</strong></p>
+            </div>
+            <div class="image-container">
+                <video src="./Схемы/Касьянова.mp4" controls loop muted onclick="showFullscreen(this)"></video>
+                <p><strong>ТНС Касьянова 19</strong></p>
+            </div>
+            <!-- Новые видео-схемы -->
+            <div class="image-container">
+                <video src="./Схемы/ТНС Университетская 1.mp4" controls loop muted onclick="showFullscreen(this)"></video>
+                <p><strong>ТНС Университетская 1</strong></p>
+            </div>
+        </div>
+        <!-- Новые видео-схемы под ЦТП Банзарова и ТНС Конева -->
+        <div class="image-wrapper" style="margin-top: 330px;">
+            <div class="image-container">
+                <video src="./Схемы/ПНС ТНС-3.mp4" controls loop muted onclick="showFullscreen(this)"></video>
+                <p><strong>ПНС ТНС-3</strong></p>
+            </div>
+            <div class="image-container">
+                <video src="./Схемы/ЦТП Затон.mp4" controls loop muted onclick="showFullscreen(this)"></video>
+                <p><strong>ЦТП Затон</strong></p>
+            </div>
+            <div class="image-container">
+                <video src="./Схемы/ЦТП Южная.mp4" controls loop muted onclick="showFullscreen(this)"></video>
+                <p><strong>ЦТП Южная</strong></p>
+            </div>
+            <div class="image-container">
+                <video src="./Схемы/ПНС Ломоносова.mp4" controls loop muted onclick="showFullscreen(this)"></video>
+                <p><strong>ПНС Ломоносова</strong></p>
+            </div>
+        </div>
+    </div>
+    <button class="toggle-btn" onclick="toggleTheme()"></button>
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        function showFullscreen(media, photoSrc = '') {
+            const fullscreenDiv = document.createElement('div');
+            fullscreenDiv.classList.add('fullscreen');
+            fullscreenDiv.innerHTML = `
+                <div class="top-right">
+                    ${photoSrc ? `<button class="photo-btn" onclick="showPhoto('${photoSrc}')">📷</button>` : ''}
+                    <button class="close-btn1" onclick="document.body.removeChild(this.parentElement.parentElement)">×</button>
+                </div>
+                ${media.tagName === 'VIDEO' ? `<video src="${media.src}" controls loop></video>` : `<img src="${media.src}" alt="Fullscreen Image">`}
+                <div class="controls">
+                    ${media.tagName === 'VIDEO' ? `<button onclick="togglePlayPause()">► Пауза/Старт</button>` : ''}
+                </div>
+            `;
+            document.body.appendChild(fullscreenDiv);
+        }
+
+        function togglePlayPause() {
+            const video = document.querySelector('.fullscreen video');
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        }
+
+        function showPhoto(photoSrc) {
+            const photoDiv = document.createElement('div');
+            photoDiv.classList.add('fullscreen');
+            photoDiv.innerHTML = `
+                <div class="top-right">
+                    <button class="close-btn" onclick="document.body.removeChild(this.parentElement.parentElement)">×</button>
+                </div>
+                <img src="${photoSrc}" alt="Фото">
+            `;
+            document.body.appendChild(photoDiv);
+        }
+    </script>
+</body>
+</html>
